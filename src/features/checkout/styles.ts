@@ -18,10 +18,11 @@ export const CheckoutMain = styled.main`
   min-width: 0;
   gap: 1rem;
   > form { display: grid; gap: .75rem; }
-  .continue-button { min-height: 3rem; border: 0; border-radius: .4rem; color: ${({ theme }) => theme.colors.onAccent}; background: ${({ theme }) => theme.colors.yellow}; font-size: .82rem; font-weight: 800; text-transform: uppercase; cursor: pointer; }
+  .continue-button { min-height: 3rem; border: 0; border-radius: .4rem; color: ${({ theme }) => theme.colors.onYellow}; background: ${({ theme }) => theme.colors.yellow}; font-size: .82rem; font-weight: 800; text-transform: uppercase; cursor: pointer; }
   .continue-button:hover { filter: brightness(.95); }
   .continue-button:disabled { opacity: .6; cursor: wait; }
   .form-message { margin: 0; color: ${({ theme }) => theme.colors.purpleDark}; font-weight: 600; }
+  .form-message[role='alert'] { color: ${({ theme }) => theme.colors.danger}; }
 `
 
 export const CheckoutTitle = styled.h1`

@@ -1,8 +1,8 @@
 # Coffee Delivery
 
-Aplicação acadêmica de catálogo e checkout de cafés feita com React, TypeScript, Vite, styled-components, React Hook Form e Zod. O código cobre Home/catálogo (TASK-1), carrinho/checkout/ViaCEP (TASK-2) e tema persistente (parte independente da TASK-3).
+Aplicação acadêmica de catálogo e checkout de cafés feita com React, TypeScript, Vite, React Router, styled-components, React Hook Form e Zod. O código cobre Home/catálogo (TASK-1), carrinho/checkout/ViaCEP (TASK-2) e confirmação/snapshot de pedido (TASK-3).
 
-> **Estado do projeto:** a TASK-2 está implementada e aguarda aprovação. A tela de confirmação, snapshot e limpeza após confirmação pertencem à TASK-3 e ainda não foram implementados. O enunciado integral do professor e os textos de RF-01 a RF-16/RN-01 a RN-10 não foram fornecidos; não se declara conformidade acadêmica integral.
+> **Estado do projeto:** TASK-1 concluída. TASK-2 implementada e seus fluxos principais foram confirmados manualmente pelo estudante; permanecem pendentes persistência após refresh, responsividade do checkout e auditoria manual WCAG 2.2 AA. TASK-3 implementada, aguarda revisão; validações visuais/manual da confirmação, persistência real após refresh e acessibilidade permanecem pendentes. O enunciado integral do professor e os textos RF-01 a RF-16/RN-01 a RN-10 não foram fornecidos; não se declara conformidade acadêmica integral.
 
 ## Requisitos
 
@@ -34,6 +34,9 @@ src/
   app/                       # rotas e composição da aplicação
   components/Header/         # navegação e controle de tema
   features/catalog/          # dados tipados, cards e catálogo
+  features/cart/             # reducer, contexto e persistência local
+  features/checkout/         # formulário, validação, ViaCEP e preço
+  features/order/            # snapshot persistido e confirmação
   features/home/             # Home responsiva
   styles/                    # tokens, temas e persistência do tema
   test/                      # configuração do Vitest/Testing Library
@@ -52,11 +55,14 @@ O botão no Header alterna entre tema claro e escuro. Os tokens semânticos est�
 - Subtotal, frete e total são calculados em centavos inteiros. O frete configurado é R$ 3,50 (350 centavos), valor visível na captura e autorizado pelo estudante como regra fixa provisória.
 - O checkout usa React Hook Form e Zod. CEP válido precisa ser consultado no ViaCEP antes da validação; consulta preenche rua, bairro, cidade, UF e complemento quando retornados. Número é informado manualmente.
 - Pagamento é selecionado entre crédito, débito e dinheiro, opções visíveis na captura. O projeto não processa pagamento.
-- A validação do checkout não confirma nem cria pedido; essa etapa fica para TASK-3.
+- Após validação de endereço, consulta obrigatória ao ViaCEP e seleção de pagamento, “Confirmar pedido” cria snapshot local e navega à confirmação. Pagamento continua sendo realizado na entrega; nenhuma transação ocorre.
+- A confirmação persiste apenas o pedido mais recente no navegador em `coffee-delivery.latest-order.v1`; um novo pedido substitui o anterior. Não há sincronização remota. Se gravar falhar, o carrinho não é limpo.
+
+O estudante confirmou manualmente o fluxo da TASK-2: quatro unidades no badge, controles de quantidade/remoção funcionais, subtotal de R$ 39,60, entrega fixa provisória de R$ 3,50 e total de R$ 43,10; consulta ViaCEP para `05734-090`; seleção de crédito, débito ou dinheiro e mensagem de dados válidos para São Paulo — SP. Isso é relato manual do estudante. Persistência do carrinho após refresh, responsividade do checkout e WCAG manual estão pendentes e registradas em `docs/evidence/TASK-2-VALIDATION.md`.
 
 ## Testes e acessibilidade
 
-Os testes de unidade e integração usam Vitest, jsdom e Testing Library. A suíte cobre Home, catálogo, reducer, persistência, cálculos, schema, ViaCEP e jornada parcial do checkout com rede simulada. WCAG 2.2 AA é a referência de projeto, mas a auditoria manual e testes com tecnologia assistiva ainda não foram concluídos. A verificação visual por navegador automatizado também está pendente; Playwright MCP não está disponível neste ambiente.
+Os testes unitários e de integração usam Vitest, jsdom e Testing Library. A suíte cobre Home, catálogo, reducer, persistência, cálculos, schema, ViaCEP, confirmação, snapshot, falha de gravação e jornada parcial/completa simulada. Na execução TASK-3, 34 testes em 13 arquivos passaram. WCAG 2.2 AA é a referência; auditoria manual e testes com tecnologia assistiva ainda não foram concluídos. Playwright MCP não estava disponível nesta execução, portanto não se declara validação visual por navegador.
 
 ## Build e preparação de deploy
 
@@ -64,8 +70,8 @@ Os testes de unidade e integração usam Vitest, jsdom e Testing Library. A suí
 
 ## Escopo ainda pendente
 
-- TASK-2 está implementada e aguarda aprovação.
-- TASK-3: confirmação integrada, snapshot independente do pedido, limpeza após confirmação e tratamento de acesso inválido à confirmação.
+- TASK-2: validação manual de persistência após refresh, responsividade do checkout e WCAG 2.2 AA.
+- TASK-3: revisão do estudante; validação visual/browser e confirmação manual de refresh de tema e pedido; auditoria manual WCAG 2.2 AA.
 - Fonte do professor: enunciado, critérios de aceite e mapeamento literal de RF-01…RF-16 e RN-01…RN-10.
 - Destino de deploy e assets finais de catálogo/marca.
 

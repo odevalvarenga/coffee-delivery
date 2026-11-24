@@ -119,21 +119,38 @@ Critérios do professor para RF-01…RF-16 e RN-01…RN-10: pendentes da fonte. 
 | Marca | Captura define a direção roxo/amarelo e wordmark Coffee Delivery; ícone original foi gerado com IA. Conferir direção exata quando Figma estiver acessível | Estudante/professor |
 | ViaCEP | Consulta obrigatória implementada antes da validação do checkout; formato, estados de falha e preenchimento registrados em `TASK-2.md`. Critérios literais do professor pendentes | Conferir com o enunciado/professor |
 | Pagamento | Tela oferece crédito, débito e dinheiro, opções visíveis na captura. Seleção local somente, sem transação; confirmação acadêmica pendente | Conferir com o enunciado/professor |
-| Frete/total | Fórmula e arredondamento pendentes | Enunciado |
+| Frete/total | Aplicação calcula subtotal e soma R$ 3,50 (350 centavos) fixos provisórios; regra visual/manual confirmada pelo estudante, mas não conferida com o enunciado | Estudante/professor |
 | Escopo professor | Fonte não localizada na pasta do projeto nem na pasta imediatamente acima | Estudante deve fornecer |
 | Referência visual | Estudante compartilhou link Figma e captura gráfica; link não pôde ser lido sem integração conectada, a captura foi utilizada para a Home e catálogo | Conectar Figma para conferir medidas/assets exatos |
 
-### Atualização TASK-3 (parcial)
+### Registro anterior da TASK-3 (execução parcial; antes da autorização atual)
 
 - Tema claro/escuro persistente foi solicitado e implementado com preferência local no navegador.
-- Confirmação deve exibir o endereço e pagamento informados pelo checkout e usar snapshot independente; esses campos e o fluxo de confirmação dependem da TASK-2 ainda não implementada.
+- Naquele momento, confirmação e snapshot ainda não estavam implementados.
 - Nenhum conteúdo, regra de retenção de pedido, fluxo de compra ou requisito RF/RN foi declarado aprovado sem a fonte do professor.
+
+### Atualização TASK-3 (implementação concluída; aguarda revisão)
+
+- Checkout válido cria ID UUID e snapshot independente com produtos, quantidades, endereço, pagamento e resumo financeiro em centavos; confirmação mostra pagamento na entrega e totais.
+- O último pedido é persistido localmente em envelope versionado para abrir a confirmação após refresh. A retenção é de um pedido por vez neste navegador; falha ao salvar mantém o carrinho. Isso é uma decisão de implementação registrada na TECH_SPEC, não armazenamento remoto.
+- Carrinho só é limpo depois de salvar com sucesso. Rotas sem snapshot válido mostram estado de acesso inválido.
+- Testes automatizados e build passam conforme TECH_SPEC/TASK-3. Validação visual browser, refresh real e auditoria manual WCAG continuam pendentes; não se declara aprovação dessas verificações.
+- As pendências manuais da TASK-2 foram preservadas em `docs/evidence/TASK-2-VALIDATION.md` e não bloquearam o desenvolvimento, conforme orientação do estudante.
 
 ### Atualização TASK-2 (implementada; aguarda aprovação)
 
 - Carrinho em Context API/`useReducer`, persistência local versionada, operações de quantidade, remoção, badge e resumo em centavos implementados.
 - Checkout usa React Hook Form/Zod; consulta ViaCEP precisa ser bem-sucedida para validar. Pagamento é apenas selecionado localmente.
 - R$ 3,50 fixos é valor provisório escolhido pelo estudante a partir do exemplo na captura; métodos de pagamento e campos foram derivados da captura, não do enunciado original.
-- A confirmação final e o snapshot continuam fora da TASK-2.
+- Na entrega da TASK-2, confirmação final e snapshot continuavam fora de seu escopo; foram implementados na TASK-3.
+
+### Validação manual de TASK-2 informada pelo estudante — 2026-11-24
+
+- Carrinho com dois produtos distintos, duas unidades de cada e total de quatro unidades; os controles de incrementar, decrementar e remover foram reportados funcionais.
+- Resumo visualmente conferido: subtotal R$ 39,60, entrega fixa provisória R$ 3,50 e total R$ 43,10. O valor de entrega foi escolhido pelo estudante a partir da captura e não é uma regra confirmada pelo professor.
+- ViaCEP retornou endereço para `05734-090`; rua, bairro, cidade e UF foram preenchidos automaticamente, conforme confirmação do estudante.
+- Crédito, débito e dinheiro foram exibidos e a seleção funcionou; a interface informou dados válidos para São Paulo — SP.
+- A interface sinalizou que a confirmação final pertence à TASK-3. Nenhum pedido foi confirmado nesta tarefa.
+- Persistência do carrinho após refresh, responsividade do checkout e auditoria manual WCAG 2.2 AA continuam pendentes. As evidências são relato manual do estudante; não se convertem em execução automatizada ou arquivo de captura pelo agente.
 
 **Bloqueio:** para afirmar que este documento preserva integralmente os requisitos do professor, é necessário obter o enunciado original. Até lá, RF/RN, público-alvo, catálogo, valores e critérios acadêmicos seguem não aprovados.

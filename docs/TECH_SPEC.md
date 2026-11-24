@@ -10,7 +10,7 @@
 - Hooks próprios apenas para encapsular comportamento reutilizável. Hooks sempre chamados no topo de componentes/hooks, sem condicionais.
 - React Hook Form para formulário; Zod para esquema e validação tipada, integrados por `@hookform/resolvers`.
 - styled-components para estilos e temas, conforme solicitação.
-- localStorage para persistência local do carrinho e possivelmente tema; não é backend nem armazenamento seguro.
+- localStorage para persistência local do carrinho, tema e pedido mais recente; não é backend nem armazenamento seguro.
 - Dependências específicas de implementação só foram instaladas após autorização do estudante para executar a tarefa correspondente.
 
 Versões declaradas na TASK-1: React `^19.0.0`, React Router `^7.1.1`, styled-components `^6.1.13`, TypeScript `~5.7.2`, Vite `^8.3.8`, `@vitejs/plugin-react` `^6.3.0`, Vitest `^5.1.1`, Testing Library `^16.1.0` e jsdom `^25.0.1`. TASK-2 adicionou React Hook Form, Zod e `@hookform/resolvers`; o lockfile fixa as versões resolvidas.
@@ -47,7 +47,7 @@ type Address = {
   postalCode: string; street: string; complement: string;
   neighborhood: string; city: string; state: string;
 };
-type PaymentMethod = string; // substituir por união literal após confirmar opções
+type PaymentMethod = 'credit-card' | 'debit-card' | 'cash'; // opções da captura, aguardam conferência com enunciado
 type OrderSnapshot = {
   id: string; lines: ReadonlyArray<CartLine>; address: Readonly<Address>;
   paymentMethod: PaymentMethod; subtotalCents: number;
@@ -63,7 +63,7 @@ Opções e campos de pagamento/endereço usados na TASK-2 foram derivados da cap
 - Ações esperadas em nível arquitetural: adicionar/alterar/remover linha e limpar carrinho. Sem definir limites comerciais antes do enunciado.
 - Persistência local serializa um envelope versionado; parse inicial trata JSON inválido e valida formato antes de usar. Política de migração/recuperação será decidida na implementação.
 - Efeitos de sincronização com localStorage ficam fora do reducer. Reducer não executa I/O.
-- No sucesso do checkout, criar snapshot imutável antes da limpeza. Persistência/vida útil do snapshot após refresh é decisão pendente.
+- No sucesso do checkout, criar snapshot imutável antes da limpeza. Implementação TASK-3 persiste o pedido mais recente em envelope local versionado (`coffee-delivery.latest-order.v1`) para consulta após refresh; nova confirmação substitui a anterior. Falha na gravação impede a limpeza. Persistência local não é backup nem armazenamento seguro.
 - Contextos separados se tema e pedido excederem o domínio do carrinho; evitar estado global indiscriminado.
 
 ## 5. Componentes e rotas (inventário de planejamento)
@@ -126,7 +126,7 @@ Destino, comandos, variáveis e processo de publicação não foram especificado
 - Naquela execução, confirmação, snapshot, endereço/pagamento e limpeza não foram implementados porque a TASK-2 ainda estava ausente. A seção 13 registra que o checkout foi implementado depois.
 - WCAG 2.2 AA permanece referência; a suíte automatizada não equivale a auditoria completa e não foram executados testes manuais com leitor de tela/teclado nesta execução.
 
-## 13. Registro de implementação — TASK-2 (aguarda aprovação)
+## 13. Registro de implementação — TASK-2 (implementada; validações manuais pendentes)
 
 - Tipos `CartLine`, `CartState` e ações discriminadas em `src/features/cart/types.ts`; reducer puro retorna estado imutável para adicionar, incrementar, decrementar, remover e limpar.
 - `CartProvider`/`useCart` expõe estado e operações. Persistência local usa chave `coffee-delivery.cart.v1`, envelope versão 1, parse de `unknown`, catálogo permitido, e falhas de armazenamento degradam para estado local sem quebrar a UI.
@@ -138,3 +138,21 @@ Destino, comandos, variáveis e processo de publicação não foram especificado
 - A confirmação não foi adicionada; submissão válida do checkout apenas mostra estado local de validação, aguardando a TASK-3.
 - Validação final desta tarefa: 25 testes em 9 arquivos passaram com `npm test -- --pool=threads --maxWorkers=2 --isolate=false`; `npm run build` passou; `npm audit` reportou zero vulnerabilidades.
 - A captura visual da TASK-2 e revisão de console não foram obtidas: Playwright MCP não estava disponível e Chrome headless encerrou com acesso negado (`0x5`). A suíte automatizada não substitui essa revisão visual/manual.
+
+### Validação manual reportada pelo estudante — 2026-11-24
+
+O estudante confirmou na interface: dois produtos com duas unidades cada (badge quatro); controles de quantidade e remoção funcionais; subtotal de 3960 centavos, frete fixo provisório de 350 centavos e total de 4310 centavos; consulta ViaCEP bem-sucedida para `05734-090` com autopreenchimento de rua/bairro/cidade/UF; opções crédito/débito/dinheiro selecionáveis; mensagem de dados válidos para São Paulo — SP. O estudante também confirmou a mensagem de que a etapa final pertence à TASK-3. Esses resultados são relato de execução manual, não evidência automatizada produzida pelo agente.
+
+Persistência do carrinho após refresh, responsividade do checkout e auditoria manual WCAG 2.2 AA seguem pendentes para a revisão da TASK-2. Persistência do tema após refresh também aguarda confirmação manual na TASK-3. Não foi feita revisão de console do navegador nem validação visual com Playwright; as capturas existentes localizadas são apenas da TASK-1.
+
+## 14. Registro de implementação — TASK-3 (implementada; aguarda revisão)
+
+- `OrderSnapshot` contém ID UUID, data ISO, linhas com nome/preço/quantidade/totais copiados, endereço, forma de pagamento, subtotal, frete e total. Linhas e snapshot são clonados e congelados no momento de criar.
+- `createOrderSnapshot` reutiliza catálogo e funções de cálculo existentes, mantém valores em centavos e rejeita carrinho vazio, produto desconhecido, quantidade inválida e overflow.
+- `orderPersistence` salva o pedido mais recente em `coffee-delivery.latest-order.v1`, envelope versão 1. Carregamento trata JSON/storage inválidos e valida estrutura, pagamento, endereço e consistência aritmética antes da confirmação.
+- Rota `/order/:orderId` mostra snapshot correspondente mesmo após refresh, e mostra estado seguro para ID ausente, inválido ou que não corresponde ao último pedido salvo. A retenção limita-se ao último pedido no dispositivo/navegador atual.
+- Checkout salva o snapshot antes de limpar o reducer do carrinho e navega para confirmação após sucesso. Exceção no snapshot/storage apresenta erro e mantém o carrinho; não há backend, gateway ou transação de pagamento.
+- Confirmação exibe status, identificador/data, produtos e quantidades, endereço, método pago na entrega e resumo financeiro; utiliza tokens dos temas existentes e estilos fluidos com adaptação mobile.
+- Tema semântico persiste em localStorage e seu teste cobre remontagem/restauração. Foi acrescentado token `onYellow` e teste matemático de contraste AA para o texto do botão de confirmação nos dois temas.
+- Testes: `npm test -- --pool=threads --maxWorkers=2 --isolate=false` — 34 testes em 13 arquivos aprovados. `npm run build` — TypeScript e Vite 8.3.8 aprovados.
+- Limitações: Playwright MCP não estava disponível nesta sessão. Não foram executados testes visuais em browser, confirmação manual de recarga real, auditoria WCAG assistiva ou revisão de console. Ver pendências TASK-2 em `docs/evidence/TASK-2-VALIDATION.md`.

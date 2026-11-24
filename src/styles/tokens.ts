@@ -7,7 +7,7 @@ export const lightTheme: DefaultTheme = {
     ink: '#403937', muted: '#574f4d', line: '#e6e5e5',
     coffee: '#403937', coffeeDark: '#272221', purple: '#8047f8',
     purpleDark: '#633bbc', purpleSoft: '#ebe5f9', yellow: '#dbac2c',
-    yellowDark: '#805500', yellowSoft: '#f1e9c9', white: '#ffffff', onAccent: '#ffffff', danger: '#a61b1b',
+    yellowDark: '#805500', yellowSoft: '#f1e9c9', white: '#ffffff', onAccent: '#ffffff', onYellow: '#272221', danger: '#a61b1b',
   },
 }
 
@@ -18,7 +18,7 @@ export const darkTheme: DefaultTheme = {
     ink: '#f5f1ee', muted: '#c8bfba', line: '#403a36',
     coffee: '#e5d8d0', coffeeDark: '#f5f1ee', purple: '#c5a7ff',
     purpleDark: '#d4bdff', purpleSoft: '#382b4c', yellow: '#e8be55',
-    yellowDark: '#f3d47e', yellowSoft: '#40371f', white: '#ffffff', onAccent: '#171513', danger: '#ff9898',
+    yellowDark: '#f3d47e', yellowSoft: '#40371f', white: '#ffffff', onAccent: '#171513', onYellow: '#171513', danger: '#ff9898',
   },
 }
 
@@ -53,6 +53,7 @@ declare module 'styled-components' {
       yellowSoft: string
       white: string
       onAccent: string
+      onYellow: string
       danger: string
     }
   }

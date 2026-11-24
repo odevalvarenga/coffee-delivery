@@ -57,3 +57,17 @@ Conferir frete, meios e campos com o enunciado/rubrica do professor; políticas 
 - `npm audit`: zero vulnerabilidades.
 - Chrome headless não iniciou no ambiente: o processo encerrou com `Acesso negado (0x5)`. Playwright MCP não está disponível, portanto não há novas capturas visuais nem revisão de console do navegador.
 - Nenhum teste depende da rede externa.
+
+## Validação manual informada pelo estudante — 2026-11-24
+
+Os resultados abaixo foram confirmados pelo estudante após testes manuais na interface; não representam execução independente do agente nem substituem evidência automatizada:
+
+- Dois produtos distintos com duas unidades cada; badge totalizou quatro unidades. Controles de incrementar, decrementar e remover foram vistos e reportados como funcionais.
+- Resumo conferido visualmente: subtotal R$ 39,60 + entrega fixa provisória R$ 3,50 = total R$ 43,10.
+- ViaCEP consultado com sucesso para `05734-090`; o estudante confirmou retorno e preenchimento automático de rua, bairro, cidade e UF. O texto literal do endereço retornado não foi registrado.
+- Crédito, débito e dinheiro disponíveis; seleção funcionando. A interface exibiu “Dados válidos para São Paulo — SP”.
+- A interface informa que a etapa final do pedido será implementada na TASK-3; não houve confirmação/criação de pedido nesta tarefa.
+
+**Evidências visuais:** o estudante relatou possuir evidências visuais, mas novos arquivos não foram localizados em `docs/evidence/`; ali permanecem apenas capturas da TASK-1. Não foram produzidas capturas da TASK-2 pelo agente: Playwright MCP indisponível e Chrome headless não iniciou (`Acesso negado (0x5)`).
+
+**Critérios ainda pendentes para aprovação integral:** confirmar manualmente persistência do carrinho após atualizar a página; validar responsividade do checkout; realizar auditoria manual WCAG 2.2 AA. Não foi executada revisão visual automatizada nem revisão de console do navegador. A suíte automatizada e build informados acima passaram, mas não cobrem esses itens manuais. Recomenda-se status “implementada; aguardando validações e aprovação”, sem marcar RF/RN como aprovados enquanto faltar o enunciado integral.

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { ArrowLeft, CreditCard, Landmark, MapPin, Minus, Plus, Trash2 } from 'lucide-react'
@@ -12,12 +12,15 @@ import { checkoutSchema, paymentMethodLabels, paymentMethods } from './checkoutS
 import type { CheckoutFormInput, CheckoutFormValues } from './checkoutSchema'
 import { calculateOrderTotalCents, DELIVERY_FEE_CENTS } from './pricing'
 import { CheckoutLayout, CheckoutMain, CheckoutPanel, CheckoutTitle, EmptyCart, Field, FormGrid, ItemsList, OrderLine, PaymentOption, Summary, ViaCepMessage } from './styles'
+import { createOrderSnapshot } from '../order/createOrderSnapshot'
+import { saveOrder } from '../order/orderPersistence'
 
 export function CheckoutPage() {
-  const { state, increment, decrement, removeItem } = useCart()
+  const { state, increment, decrement, removeItem, clearCart } = useCart()
+  const navigate = useNavigate()
   const [postalCodeStatus, setPostalCodeStatus] = useState<{ kind: 'idle' | 'loading' | 'success' | 'error'; message: string }>({ kind: 'idle', message: '' })
   const [verifiedPostalCode, setVerifiedPostalCode] = useState<string | null>(null)
-  const [formMessage, setFormMessage] = useState('')
+  const [confirmationError, setConfirmationError] = useState('')
   const subtotalCents = calculateSubtotalCents(state.lines)
   const totalCents = calculateOrderTotalCents(state.lines)
   const {
@@ -71,7 +74,15 @@ export function CheckoutPage() {
       setPostalCodeStatus({ kind: 'error', message: 'A consulta ViaCEP é necessária para validar o endereço.' })
       return
     }
-    setFormMessage(`Dados válidos para ${values.city} — ${values.state}. A etapa final do pedido será conectada na TASK-3.`)
+    setConfirmationError('')
+    try {
+      const order = createOrderSnapshot(state.lines, values)
+      saveOrder(order)
+      clearCart()
+      navigate(`/order/${encodeURIComponent(order.id)}`, { replace: true })
+    } catch {
+      setConfirmationError('Não foi possível confirmar e salvar seu pedido. Seus produtos continuam no carrinho; tente novamente.')
+    }
   }
 
   if (state.lines.length === 0) {
@@ -93,7 +104,7 @@ export function CheckoutPage() {
       <CheckoutLayout>
         <CheckoutMain>
           <CheckoutTitle>Complete seu pedido</CheckoutTitle>
-          <form onSubmit={handleSubmit(onSubmit)} onChange={() => setFormMessage('')} noValidate>
+          <form onSubmit={handleSubmit(onSubmit)} noValidate>
           <CheckoutPanel>
             <h2><MapPin size={18} aria-hidden="true" /> Endereço de entrega</h2>
             <p>Informe o CEP para consultar e preencher os dados disponíveis.</p>
@@ -163,8 +174,8 @@ export function CheckoutPage() {
             {errors.paymentMethod && <p id="payment-error" className="field-error" role="alert">{errors.paymentMethod.message}</p>}
           </CheckoutPanel>
 
-            <button className="continue-button" type="submit" disabled={isSubmitting}>Validar endereço e pagamento</button>
-            {formMessage && <p className="form-message" role="status" aria-live="polite">{formMessage}</p>}
+            <button className="continue-button" type="submit" disabled={isSubmitting}>Confirmar pedido</button>
+            {confirmationError && <p className="form-message" role="alert">{confirmationError}</p>}
           </form>
         </CheckoutMain>
 

@@ -61,3 +61,20 @@ Registrar data, ferramenta/uso, artefato afetado, contribuição da IA e revisã
 - **Decisões da fonte visual:** taxa R$ 3,50 aceita pelo estudante como fixa provisória; métodos crédito/débito/dinheiro e campos de endereço derivados da captura. Esses pontos não foram verificados contra o enunciado do professor.
 - **Limite:** a validação local do checkout não cria pedido e não navega para confirmação. Nenhum backend ou pagamento real foi criado. IDs RF/RN seguem pendentes do enunciado.
 - **Validação:** `npm test -- --pool=threads --maxWorkers=2 --isolate=false`: 25 testes aprovados em 9 arquivos; `npm run build` passou; `npm audit` reportou zero vulnerabilidades. Playwright MCP não estava disponível e Chrome headless falhou ao iniciar por acesso negado (`0x5`), então não foram produzidas capturas novas nem auditados erros do console do navegador.
+
+## Consolidação documental da TASK-2
+
+- **Data:** 2026-11-24. Nenhum código ou dependência foi alterado nesta consolidação.
+- **Relato manual do estudante:** dois produtos com duas unidades cada (quatro no badge); controles de incrementar, decrementar e remover funcionais; subtotal R$ 39,60 + frete fixo provisório R$ 3,50 = total R$ 43,10; consulta ViaCEP para `05734-090` preenchendo rua, bairro, cidade e UF; seleção de crédito, débito e dinheiro; interface exibiu dados válidos para São Paulo — SP e indicou que confirmação pertence à TASK-3.
+- Esse registro é evidência textual informada pelo estudante, não teste executado pela IA. Não foi fornecida/localizada captura TASK-2 nesta consolidação; `docs/evidence/` contém apenas capturas da TASK-1.
+- Persistência do carrinho após refresh, responsividade do checkout e auditoria manual WCAG 2.2 AA permanecem pendentes para TASK-2; persistência do tema após refresh permanece pendente na TASK-3. Playwright não foi executado e não houve revisão de console.
+
+## Atualização — TASK-3 (implementação)
+
+- **Data:** 2026-11-24.
+- **Escopo autorizado:** confirmação do pedido, snapshot, persistência local, limpeza ordenada do carrinho, rota inválida, integração com checkout, testes e atualização documental. As pendências de validação TASK-2 foram preservadas sem bloquear o desenvolvimento, como instruído pelo estudante.
+- **Alterações:** criada modelagem `OrderSnapshot`, criação de ID UUID, snapshot imutável e validação/leitura/gravação versionadas; rota `/order/:orderId` apresenta resumo, endereço e forma de pagamento. Checkout persiste primeiro e limpa o reducer apenas após gravação bem-sucedida; falhas preservam os itens. Adicionado token semântico de texto em fundo amarelo para contraste do CTA.
+- **Decisão registrada:** manter somente o pedido confirmado mais recente no localStorage para permitir consulta após refresh; nova confirmação substitui a anterior. Não há backend, pagamento real nem garantia de backup. Falha ao salvar impede confirmação e limpeza.
+- **Testes executados:** `npm test -- --pool=threads --maxWorkers=2 --isolate=false` — 34 testes aprovados em 13 arquivos; inclui snapshot/valores, pedido vazio/inválido, UUID, persistência e JSON inválido, falha de armazenamento, fluxo de confirmação/limpeza, acesso inválido e contraste mínimo AA do CTA em ambos os temas.
+- **Build:** `npm run build` passou com `tsc -b` e Vite 8.3.8. A primeira execução encontrou dois erros de tipagem em teste/validação de endereço; foram corrigidos e a execução subsequente passou.
+- **Limitações:** nenhum teste visual por browser/Playwright foi realizado nesta tarefa; Playwright MCP não estava disponível. Auditoria manual WCAG, refresh real de carrinho/tema/pedido, responsividade visual e revisão de console continuam pendentes. Nenhum deploy ou push foi feito.

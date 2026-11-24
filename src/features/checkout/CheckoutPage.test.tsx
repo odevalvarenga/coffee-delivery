@@ -4,14 +4,14 @@ import { MemoryRouter } from 'react-router-dom'
 import { CartProvider } from '../cart/CartContext'
 import { CART_STORAGE_KEY } from '../cart/cartPersistence'
 import { ColorModeProvider } from '../../styles/ColorModeProvider'
-import { CheckoutPage } from './CheckoutPage'
+import { App } from '../../app/App'
 
 function renderCheckout() {
   render(
     <ColorModeProvider>
       <CartProvider>
         <MemoryRouter initialEntries={['/checkout']}>
-          <CheckoutPage />
+          <App />
         </MemoryRouter>
       </CartProvider>
     </ColorModeProvider>,
@@ -51,7 +51,7 @@ describe('CheckoutPage', () => {
     fireEvent.change(screen.getByLabelText('Cidade'), { target: { value: 'São Paulo' } })
     fireEvent.change(screen.getByLabelText('UF'), { target: { value: 'SP' } })
     fireEvent.click(screen.getByRole('radio', { name: 'Cartão de crédito' }))
-    fireEvent.click(screen.getByRole('button', { name: 'Validar endereço e pagamento' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Confirmar pedido' }))
     expect(await screen.findByText('Consulte este CEP no ViaCEP antes de continuar.')).toBeInTheDocument()
 
     fireEvent.click(screen.getByRole('button', { name: 'Buscar CEP' }))
@@ -63,13 +63,16 @@ describe('CheckoutPage', () => {
     expect(screen.getByLabelText('UF')).toHaveValue('SP')
     expect(fetcher).toHaveBeenCalledOnce()
 
-    fireEvent.click(screen.getByRole('button', { name: 'Validar endereço e pagamento' }))
-    expect(await screen.findByText(/dados válidos para são paulo/i)).toBeInTheDocument()
-    expect(screen.queryByText(/pedido confirmado/i)).not.toBeInTheDocument()
-
-    fireEvent.change(screen.getByLabelText('CEP'), { target: { value: '01002000' } })
-    expect(screen.getByLabelText('Rua')).toHaveValue('')
-    expect(screen.getByLabelText('Número')).toHaveValue('')
+    fireEvent.click(screen.getByRole('button', { name: 'Confirmar pedido' }))
+    expect(await screen.findByRole('heading', { name: 'Uhu! Seu café está a caminho' })).toBeInTheDocument()
+    expect(screen.getByText(/pedido [0-9a-f-]{36}/i)).toBeInTheDocument()
+    expect(screen.getByText('Praça da Sé, 100')).toBeInTheDocument()
+    expect(screen.getByText('Cartão de crédito — pagamento realizado na entrega.')).toBeInTheDocument()
+    expect(screen.getByText('R$ 23,30')).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Carrinho vazio' })).toBeInTheDocument()
+    await waitFor(() => expect(window.localStorage.getItem(CART_STORAGE_KEY)).toBe('{"version":1,"lines":[]}'))
+    const persistedOrder: unknown = JSON.parse(window.localStorage.getItem('coffee-delivery.latest-order.v1') ?? 'null')
+    expect(persistedOrder).toMatchObject({ version: 1, order: { id: expect.stringMatching(/^[0-9a-f-]{36}$/i) } })
   })
 
   it('removes the last coffee, clears persisted items and returns to the empty-cart state', async () => {
@@ -111,5 +114,30 @@ describe('CheckoutPage', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Buscar CEP' }))
     expect(await screen.findByText(/não foi possível conectar ao viacep/i)).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Buscar CEP' })).toBeEnabled()
+  })
+
+  it('keeps the cart when saving a confirmed order fails', async () => {
+    window.localStorage.setItem(CART_STORAGE_KEY, JSON.stringify({ version: 1, lines: [{ productId: 'latte', quantity: 1 }] }))
+    const fetcher = vi.fn<typeof fetch>().mockResolvedValue(new Response(JSON.stringify({
+      cep: '01001-000', logradouro: 'Praça da Sé', complemento: '', bairro: 'Sé', localidade: 'São Paulo', uf: 'SP',
+    }), { status: 200 }))
+    vi.stubGlobal('fetch', fetcher)
+    const originalSetItem = Storage.prototype.setItem
+    vi.spyOn(Storage.prototype, 'setItem').mockImplementation(function (this: Storage, key: string, value: string) {
+      if (key === 'coffee-delivery.latest-order.v1') throw new Error('quota exceeded')
+      originalSetItem.call(this, key, value)
+    })
+    renderCheckout()
+    fireEvent.change(screen.getByLabelText('CEP'), { target: { value: '01001000' } })
+    fireEvent.click(screen.getByRole('button', { name: 'Buscar CEP' }))
+    await screen.findByText(/endereço encontrado pelo viacep/i)
+    fireEvent.change(screen.getByLabelText('Número'), { target: { value: '100' } })
+    fireEvent.click(screen.getByLabelText('Cartão de crédito'))
+    fireEvent.click(screen.getByRole('button', { name: 'Confirmar pedido' }))
+
+    expect(await screen.findByRole('alert')).toHaveTextContent(/seus produtos continuam no carrinho/i)
+    expect(screen.getByRole('heading', { name: 'Complete seu pedido' })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Carrinho, 1 unidade' })).toBeInTheDocument()
+    expect(window.localStorage.getItem(CART_STORAGE_KEY)).toContain('"quantity":1')
   })
 })

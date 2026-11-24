@@ -4,7 +4,7 @@
 
 1. Ler integralmente `docs/PRD_SPEC.md`, `docs/TECH_SPEC.md`, `docs/TASKS_SPEC.md`, a tarefa ativa em `docs/tasks/` e o enunciado integral do professor.
 2. Se enunciado, critério ou decisão necessária estiver ausente, não inventar nem afirmar conformidade. Registrar a pendência e pedir o material/decisão ao estudante antes do trabalho dependente.
-3. Esta etapa está limitada a documentação. Não criar aplicação, componentes ou funcionalidades e não instalar dependências até aprovação explícita do estudante.
+3. Na etapa de planejamento/documentação, não criar aplicação, componentes ou funcionalidades nem instalar dependências. Implementação só pode começar após autorização explícita do estudante para uma tarefa identificada; executar exclusivamente o escopo autorizado.
 
 ## Execução aprovada
 
