@@ -1,6 +1,6 @@
 # Especificação técnica — Coffee Delivery
 
-**Estado:** proposta de arquitetura para revisão; sujeita ao enunciado ausente e à aprovação antes da implementação.
+**Estado:** arquitetura aplicada nas TASK-1 e TASK-2. O enunciado do professor continua ausente; decisões de checkout derivadas da captura são provisórias e aguardam conferência.
 
 ## 1. Princípios e stack
 
@@ -8,12 +8,12 @@
 - React Router para rotas de catálogo/checkout/confirmação, a validar com os fluxos finais.
 - Context API para disponibilizar estado global; `useReducer` para transições explícitas do carrinho e pedido.
 - Hooks próprios apenas para encapsular comportamento reutilizável. Hooks sempre chamados no topo de componentes/hooks, sem condicionais.
-- React Hook Form para formulário; Zod para esquema e validação tipada, integrados por resolver quando aprovado.
+- React Hook Form para formulário; Zod para esquema e validação tipada, integrados por `@hookform/resolvers`.
 - styled-components para estilos e temas, conforme solicitação.
 - localStorage para persistência local do carrinho e possivelmente tema; não é backend nem armazenamento seguro.
-- Nenhuma dependência deve ser instalada antes da aprovação da etapa de implementação.
+- Dependências específicas de implementação só foram instaladas após autorização do estudante para executar a tarefa correspondente.
 
-Versões declaradas na TASK-1: React `^19.0.0`, React Router `^7.1.1`, styled-components `^6.1.13`, TypeScript `~5.7.2`, Vite `^8.3.8`, `@vitejs/plugin-react` `^6.3.0`, Vitest `^5.1.1`, Testing Library `^16.1.0` e jsdom `^25.0.1`. Lockfile fixa as versões resolvidas.
+Versões declaradas na TASK-1: React `^19.0.0`, React Router `^7.1.1`, styled-components `^6.1.13`, TypeScript `~5.7.2`, Vite `^8.3.8`, `@vitejs/plugin-react` `^6.3.0`, Vitest `^5.1.1`, Testing Library `^16.1.0` e jsdom `^25.0.1`. TASK-2 adicionou React Hook Form, Zod e `@hookform/resolvers`; o lockfile fixa as versões resolvidas.
 
 ## 2. Arquitetura proposta
 
@@ -55,7 +55,7 @@ type OrderSnapshot = {
 };
 ```
 
-`Product`, opções de pagamento, política de identificador e campos obrigatórios ficam pendentes do enunciado. Snapshot precisa copiar os dados relevantes do pedido; não pode apontar para estado mutável do carrinho.
+Opções e campos de pagamento/endereço usados na TASK-2 foram derivados da captura; confirmação do professor está pendente. Snapshot pertence à TASK-3 e precisa copiar os dados relevantes do pedido; não pode apontar para estado mutável do carrinho.
 
 ## 4. Estado e persistência
 
@@ -78,29 +78,29 @@ A consulta ViaCEP faz parte do fluxo planejado e não pode ser removida nem trat
 
 ## 7. Cálculos monetários
 
-Preço unitário e totais em centavos inteiros. Subtotal = soma de preço unitário × quantidade; frete e arredondamento somente conforme decisão validada. Total = subtotal + taxa aplicável. Taxa de entrega está pendente; não adotar zero nem valor arbitrário. Formatação localizada para BRL é apresentação do inteiro em centavos, sem converter cálculo para ponto flutuante decimal. Validar valores, quantidades e overflow de forma explícita.
+Preço unitário e totais em centavos inteiros. Subtotal = soma de preço unitário × quantidade; frete e arredondamento somente conforme decisão validada. Total = subtotal + taxa aplicável. Taxa de entrega de 350 centavos é provisória, autorizada pelo estudante a partir do exemplo na captura e aguarda validação do professor. Formatação localizada para BRL é apresentação do inteiro em centavos, sem converter cálculo para ponto flutuante decimal. Validar valores, quantidades e overflow de forma explícita.
 
 ## 8. Temas, responsividade e acessibilidade
 
-- styled-components com tokens semânticos e tema claro/escuro; paleta e persistência do tema pendentes de marca/enunciado.
+- styled-components com tokens semânticos para claro/escuro. Implementado em `src/styles/tokens.ts` usando `ThemeProvider`; `ColorModeProvider` armazena `light`/`dark` em `localStorage` (`coffee-delivery.color-mode`) e mantém operação na sessão caso o armazenamento lance erro. Tema inicial claro.
 - Layout adaptável para telas estreitas e largas; breakpoints definidos a partir do layout de referência, ainda ausente.
 - WCAG 2.2 AA como referência exigida: teclado, foco visível, ordem lógica, rótulos/instruções, erros associados aos campos, contraste, sem dependência exclusiva de cor, semântica e anúncios de mudanças relevantes. Critérios verificáveis por fluxo serão escritos na tarefa de implementação.
 - Respeitar preferência de movimento reduzido se houver animações; não inventar movimento visual como requisito.
 
-## 9. Estratégia de testes (planejada; não executar nesta etapa)
+## 9. Estratégia de testes
 
 - Unitários: reducer, cálculos em centavos, validações Zod, parse/versionamento de persistência.
 - Integração: componentes de catálogo/carrinho, formulário, estados do ViaCEP com mock, snapshot e limpeza ordenada.
 - Navegação ponta a ponta: fluxo definido pelo professor quando disponível, incluindo caminhos válidos e inválidos.
 - Acessibilidade: verificações automatizadas como apoio e revisão manual por teclado, foco, rótulos, contraste e leitor de tela; ferramenta e critérios finais pendentes.
 - Cobrir estados vazios, limite/quantidade quando definido, entradas inválidas, falha de rede, atualização de página e confirmação.
-- Nenhum teste será rodado/criado nesta etapa de planejamento.
+- Resultados executados por tarefa ficam registrados nas seções de implementação abaixo; não declarar cobertura de fluxo não executada.
 
 ## 10. Deploy e decisões pendentes
 
-Destino, comandos, variáveis e processo de publicação não foram especificados; TASK-3 inclui documentação/deploy, mas plataforma e configuração aguardam confirmação. App sem segredos ou chamadas a pagamento real. Riscos: enunciado ausente, fontes de imagem/licença desconhecidas, regras de frete e meios de pagamento não definidos, indisponibilidade ViaCEP, dados locais incompatíveis entre versões e ausência de layout de referência.
+Destino, comandos, variáveis e processo de publicação não foram especificados; TASK-3 inclui documentação/deploy, mas plataforma e configuração aguardam confirmação. App sem segredos ou chamadas a pagamento real. Riscos: enunciado ausente, fontes de imagem/licença desconhecidas, frete e meios provisórios aguardando validação acadêmica, indisponibilidade ViaCEP, dados locais incompatíveis entre versões e conferência de layout Figma pendente.
 
-## 11. Registro de implementação — TASK-1 (concluída; aguarda aprovação para TASK-2)
+## 11. Registro de implementação — TASK-1 (concluída)
 
 - Shell atual: Vite + React + TypeScript estrito, React Router, styled-components e `lucide-react` para ícones de interface.
 - Componentes: `Header`, `Home`, `CoffeeCatalog`, `CoffeeCard`; catálogo recebe coleção tipada por props.
@@ -115,3 +115,26 @@ Destino, comandos, variáveis e processo de publicação não foram especificado
 - Contraste calculado: texto padrão `#574F4D` em `#FAFAFA` = 7.65:1; tags `#805500` em `#F1E9C9` = 5.36:1; roxo principal `#8047F8` em `#FAFAFA` = 4.82:1. Verificações de contraste pontuais não representam auditoria WCAG 2.2 AA completa.
 - `npm run build`: passou com Vite 8.3.8. `npm test`: 4 testes passaram com Vitest 5.1.1. `npm audit`: zero vulnerabilidades após atualizar Vite/Vitest e o plugin React.
 - Context7 consultado para documentação atual de Vite 8, styled-components 6.x e Vitest 5; IDs oficiais usados: `/vitejs/vite`, `/websites/styled-components`, `/vitest-dev/vitest`.
+
+## 12. Registro da execução anterior — TASK-3 (parcial; antes da TASK-2)
+
+- Tema claro/escuro aplicado aos estilos existentes por tokens semânticos tipados; o controle de alternância fica no Header. A persistência foi coberta por teste de montar, alternar, salvar e restaurar tema.
+- README documenta comandos, arquitetura, tema, estado real das tarefas e preparação genérica de build estático. Plataforma de deploy não foi escolhida; não há configuração específica nem publicação.
+- Teste executado com `npm test -- --pool=threads`: 3 arquivos, 6 testes passaram (Home/catálogo, botão acessível, e persistência). O `npm test` padrão tentou iniciar processos filhos e recebeu `spawn EPERM` no ambiente Windows restrito; o modo threads contornou a limitação.
+- `npm run build`: passou após as alterações.
+- Playwright MCP e ferramentas de navegador não estavam disponíveis para esta execução; não se afirma revisão visual de breakpoints nem de erros de console nesta etapa.
+- Naquela execução, confirmação, snapshot, endereço/pagamento e limpeza não foram implementados porque a TASK-2 ainda estava ausente. A seção 13 registra que o checkout foi implementado depois.
+- WCAG 2.2 AA permanece referência; a suíte automatizada não equivale a auditoria completa e não foram executados testes manuais com leitor de tela/teclado nesta execução.
+
+## 13. Registro de implementação — TASK-2 (aguarda aprovação)
+
+- Tipos `CartLine`, `CartState` e ações discriminadas em `src/features/cart/types.ts`; reducer puro retorna estado imutável para adicionar, incrementar, decrementar, remover e limpar.
+- `CartProvider`/`useCart` expõe estado e operações. Persistência local usa chave `coffee-delivery.cart.v1`, envelope versão 1, parse de `unknown`, catálogo permitido, e falhas de armazenamento degradam para estado local sem quebrar a UI.
+- Catálogo permite escolher quantidade e adicionar. Header exibe badge com total de unidades; rota `/checkout` usa React Router. Carrinho vazio tem retorno ao catálogo.
+- Preços/totais são centavos inteiros; formatação BRL só ocorre na apresentação. Frete fixo provisório de 350 centavos vem do exemplo na captura e foi autorizado pelo estudante; revisar contra o enunciado do professor.
+- Checkout usa React Hook Form + Zod. Campos capturados pela referência: CEP, rua, número, complemento opcional, bairro, cidade e UF. Seleção requerida é uma das opções visíveis (crédito/débito/dinheiro); nenhuma transação é executada.
+- `getViaCepAddress` normaliza 8 dígitos, usa fetch real para ViaCEP, estreita JSON `unknown`, trata erro de formato, CEP não encontrado, HTTP, rede e corpo inválido. Testes usam fetch simulado. Endereço preenchido apenas com campos disponíveis. A validação exige que o CEP atual tenha sido consultado com sucesso.
+- Context7 consultado para React Hook Form, resolvers Zod e Zod. IDs usados: `/react-hook-form/documentation`, `/react-hook-form/resolvers`, `/colinhacks/zod`.
+- A confirmação não foi adicionada; submissão válida do checkout apenas mostra estado local de validação, aguardando a TASK-3.
+- Validação final desta tarefa: 25 testes em 9 arquivos passaram com `npm test -- --pool=threads --maxWorkers=2 --isolate=false`; `npm run build` passou; `npm audit` reportou zero vulnerabilidades.
+- A captura visual da TASK-2 e revisão de console não foram obtidas: Playwright MCP não estava disponível e Chrome headless encerrou com acesso negado (`0x5`). A suíte automatizada não substitui essa revisão visual/manual.

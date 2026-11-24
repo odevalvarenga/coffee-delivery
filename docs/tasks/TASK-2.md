@@ -1,7 +1,7 @@
 # TASK-2 — Estado, carrinho, checkout e integração ViaCEP
 
-**Status:** planejada; depende da TASK-1 e de aprovação para implementação.  
-**Dependências:** TASK-1 aceita; RF/RN transcritos; frete, catálogo e fluxo de checkout definidos.
+**Status:** implementada nesta execução; aguarda revisão/aprovação do estudante.
+**Dependências:** TASK-1 implementada. O enunciado literal RF/RN segue ausente e impede declarar conformidade acadêmica integral.
 
 ## Escopo
 
@@ -14,6 +14,13 @@
 ## Rastreabilidade
 
 RF-01…RF-16 e RN-01…RN-10: correspondências ainda pendentes do enunciado. Mapear cada requisito aplicável a transição, interface e teste antes do início.
+
+## Decisões registradas para esta implementação
+
+- **Frete:** R$ 3,50 (350 centavos), valor mostrado na captura do checkout. O estudante autorizou seu uso como valor fixo provisório; não representa regra do professor confirmada.
+- **Pagamento:** crédito, débito e dinheiro, opções visíveis na captura. Nenhuma transação é processada.
+- **Endereço:** CEP, rua, número, complemento opcional, bairro, cidade e UF, campos visíveis na captura. ViaCEP é obrigatório para liberar a validação do checkout. Campos de rua/bairro/cidade/UF são preenchidos quando retornados; número é informado manualmente.
+- **Limite:** submissão válida exibe estado local de validação e não cria nem confirma pedido. A confirmação permanece na TASK-3.
 
 ## Arquivos envolvidos (previsão)
 
@@ -40,4 +47,13 @@ Unitários do reducer, persistência e cálculos; validação de formulário; se
 
 ## Pendências
 
-Taxa e regra de cálculo; campos e regra de CEP; comportamento em indisponibilidade ViaCEP; opções de pagamento; limites de quantidade; política de carrinho vazio e refresh; dados persistidos e privacidade.
+Conferir frete, meios e campos com o enunciado/rubrica do professor; políticas de limite de quantidade e privacidade; validação visual em navegador. A captura sustenta os valores e campos usados, mas não substitui a fonte acadêmica.
+
+## Evidências desta execução
+
+- Testes cobrem reducer, persistência versionada, cálculos em centavos, schema do formulário, estados do cliente ViaCEP e fluxo parcial de checkout com rede simulada.
+- `npm test -- --pool=threads --maxWorkers=2 --isolate=false`: 25 testes passaram em 9 arquivos.
+- `npm run build`: passou com TypeScript e Vite 8.3.8.
+- `npm audit`: zero vulnerabilidades.
+- Chrome headless não iniciou no ambiente: o processo encerrou com `Acesso negado (0x5)`. Playwright MCP não está disponível, portanto não há novas capturas visuais nem revisão de console do navegador.
+- Nenhum teste depende da rede externa.

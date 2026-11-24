@@ -14,8 +14,8 @@ export const SectionHeading = styled.div`
   justify-content: space-between;
   gap: 1rem;
   margin-bottom: 2.2rem;
-  h2 { margin: 0; color: ${tokens.colors.ink}; font: 700 1.65rem/1.2 ${tokens.typography.display}; }
-  > span { display: inline-flex; align-items: center; gap: .45rem; color: ${tokens.colors.purple}; font-size: .82rem; font-weight: 700; }
+  h2 { margin: 0; color: ${({ theme }) => theme.colors.ink}; font: 700 1.65rem/1.2 ${tokens.typography.display}; }
+  > span { display: inline-flex; align-items: center; gap: .45rem; color: ${({ theme }) => theme.colors.purple}; font-size: .82rem; font-weight: 700; }
 `
 
 export const CatalogGrid = styled.div`
@@ -34,7 +34,7 @@ export const ProductCard = styled.article`
   align-items: center;
   padding: 0 1rem 1.25rem;
   border-radius: .4rem 2.25rem .4rem 2.25rem;
-  background: ${tokens.colors.surfaceWarm};
+  background: ${({ theme }) => theme.colors.surfaceWarm};
   text-align: center;
 `
 
@@ -55,7 +55,7 @@ export const ProductCategories = styled.ul`
   gap: .25rem;
   margin: .35rem 0 .55rem;
   padding: 0;
-  li { padding: .2rem .5rem; border-radius: 999px; color: ${tokens.colors.yellowDark}; background: ${tokens.colors.yellowSoft}; font-size: .6rem; font-weight: 700; line-height: 1; list-style: none; text-transform: uppercase; }
+  li { padding: .2rem .5rem; border-radius: 999px; color: ${({ theme }) => theme.colors.yellowDark}; background: ${({ theme }) => theme.colors.yellowSoft}; font-size: .6rem; font-weight: 700; line-height: 1; list-style: none; text-transform: uppercase; }
 `
 
 export const ProductInfo = styled.div`
@@ -68,14 +68,14 @@ export const ProductInfo = styled.div`
 
 export const ProductName = styled.h3`
   margin: .2rem 0 .45rem;
-  color: ${tokens.colors.ink};
+  color: ${({ theme }) => theme.colors.ink};
   font: 700 1.2rem/1.3 ${tokens.typography.display};
 `
 
 export const ProductDescription = styled.p`
   min-height: 3.2rem;
   margin: 0;
-  color: ${tokens.colors.muted};
+  color: ${({ theme }) => theme.colors.muted};
   font-size: .78rem;
   line-height: 1.55;
 `
@@ -86,7 +86,32 @@ export const ProductPrice = styled.p`
   gap: .25rem;
   margin: auto 0 0;
   padding-top: 1rem;
-  color: ${tokens.colors.ink};
+  color: ${({ theme }) => theme.colors.ink};
   span { font-size: .82rem; }
   strong { font-size: 1.35rem; font-weight: 700; }
+`
+
+export const QuantityControls = styled.div`
+  display: inline-flex;
+  align-items: center;
+  gap: .15rem;
+  margin-top: 1rem;
+  padding: .2rem;
+  border-radius: .5rem;
+  background: ${({ theme }) => theme.colors.surface};
+  button {
+    display: grid;
+    width: 2rem;
+    height: 2rem;
+    place-items: center;
+    border: 0;
+    border-radius: .35rem;
+    color: ${({ theme }) => theme.colors.purple};
+    background: transparent;
+    cursor: pointer;
+  }
+  button:hover { background: ${({ theme }) => theme.colors.purpleSoft}; }
+  output { min-width: 1.5rem; color: ${({ theme }) => theme.colors.ink}; font-size: .9rem; }
+  .add-to-cart { margin-left: .3rem; color: ${({ theme }) => theme.colors.onAccent}; background: ${({ theme }) => theme.colors.purpleDark}; }
+  .add-to-cart:hover { filter: brightness(.94); background: ${({ theme }) => theme.colors.purpleDark}; }
 `

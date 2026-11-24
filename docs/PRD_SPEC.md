@@ -113,14 +113,27 @@ Critérios do professor para RF-01…RF-16 e RN-01…RN-10: pendentes da fonte. 
 
 | Tema | Decisão/estado | Responsável pela resolução |
 |---|---|---|
-| Taxa de entrega | Pendente; não assumir valor fixo, gratuito ou por distância | Estudante/professor, conforme enunciado |
+| Taxa de entrega | R$ 3,50 (350 centavos) aparece na captura. O estudante autorizou o uso como taxa fixa provisória para a TASK-2; ainda não é regra do professor confirmada | Conferir com o enunciado/professor |
 | Catálogo | Captura de referência mostra 14 cafés, categorias e R$ 9,90 por item; textos legíveis transcritos para `catalog-data.ts`. Confirmar fidelidade à fonte original quando acessível | Estudante/professor |
 | Imagens | Captura mostra fotos dos cafés, porém não fornece assets originais. Cards estão com ilustrações vetoriais geradas em código; hero e emblema foram gerados com IA | Conferir no Figma e obter assets licenciados, se existirem |
 | Marca | Captura define a direção roxo/amarelo e wordmark Coffee Delivery; ícone original foi gerado com IA. Conferir direção exata quando Figma estiver acessível | Estudante/professor |
-| ViaCEP | Consulta obrigatória, não opcional; gatilho, campos e tratamento de indisponibilidade pendentes | Especificação do checkout |
-| Pagamento | Apenas seleção/simulação local; meios e regras pendentes | Enunciado |
+| ViaCEP | Consulta obrigatória implementada antes da validação do checkout; formato, estados de falha e preenchimento registrados em `TASK-2.md`. Critérios literais do professor pendentes | Conferir com o enunciado/professor |
+| Pagamento | Tela oferece crédito, débito e dinheiro, opções visíveis na captura. Seleção local somente, sem transação; confirmação acadêmica pendente | Conferir com o enunciado/professor |
 | Frete/total | Fórmula e arredondamento pendentes | Enunciado |
 | Escopo professor | Fonte não localizada na pasta do projeto nem na pasta imediatamente acima | Estudante deve fornecer |
 | Referência visual | Estudante compartilhou link Figma e captura gráfica; link não pôde ser lido sem integração conectada, a captura foi utilizada para a Home e catálogo | Conectar Figma para conferir medidas/assets exatos |
+
+### Atualização TASK-3 (parcial)
+
+- Tema claro/escuro persistente foi solicitado e implementado com preferência local no navegador.
+- Confirmação deve exibir o endereço e pagamento informados pelo checkout e usar snapshot independente; esses campos e o fluxo de confirmação dependem da TASK-2 ainda não implementada.
+- Nenhum conteúdo, regra de retenção de pedido, fluxo de compra ou requisito RF/RN foi declarado aprovado sem a fonte do professor.
+
+### Atualização TASK-2 (implementada; aguarda aprovação)
+
+- Carrinho em Context API/`useReducer`, persistência local versionada, operações de quantidade, remoção, badge e resumo em centavos implementados.
+- Checkout usa React Hook Form/Zod; consulta ViaCEP precisa ser bem-sucedida para validar. Pagamento é apenas selecionado localmente.
+- R$ 3,50 fixos é valor provisório escolhido pelo estudante a partir do exemplo na captura; métodos de pagamento e campos foram derivados da captura, não do enunciado original.
+- A confirmação final e o snapshot continuam fora da TASK-2.
 
 **Bloqueio:** para afirmar que este documento preserva integralmente os requisitos do professor, é necessário obter o enunciado original. Até lá, RF/RN, público-alvo, catálogo, valores e critérios acadêmicos seguem não aprovados.

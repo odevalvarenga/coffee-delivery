@@ -1,6 +1,8 @@
-import { Coffee } from 'lucide-react'
+import { Coffee, Minus, Plus, ShoppingCart } from 'lucide-react'
+import { useState } from 'react'
+import { useCart } from '../cart/CartContext'
 import type { CoffeeProduct } from './types'
-import { CatalogGrid, DrinkArt, ProductCard, ProductCategories, ProductDescription, ProductInfo, ProductName, ProductPrice, Section, SectionHeading } from './styles'
+import { CatalogGrid, DrinkArt, ProductCard, ProductCategories, ProductDescription, ProductInfo, ProductName, ProductPrice, QuantityControls, Section, SectionHeading } from './styles'
 
 type CoffeeCatalogProps = {
   products: readonly CoffeeProduct[]
@@ -25,6 +27,9 @@ function CoffeeCupArt({ index }: { index: number }) {
 }
 
 export function CoffeeCard({ product, index }: { product: CoffeeProduct; index: number }) {
+  const [quantity, setQuantity] = useState(1)
+  const { addItem } = useCart()
+
   return (
     <ProductCard>
       <CoffeeCupArt index={index} />
@@ -38,6 +43,18 @@ export function CoffeeCard({ product, index }: { product: CoffeeProduct; index: 
           <span aria-label="Preço">R$</span>
           <strong>{new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(product.priceCents / 100)}</strong>
         </ProductPrice>
+        <QuantityControls role="group" aria-label={`Quantidade de ${product.name}`}>
+          <button type="button" aria-label={`Diminuir quantidade de ${product.name}`} onClick={() => setQuantity((current) => Math.max(1, current - 1))}>
+            <Minus size={14} aria-hidden="true" />
+          </button>
+          <output aria-live="polite">{quantity}</output>
+          <button type="button" aria-label={`Aumentar quantidade de ${product.name}`} onClick={() => setQuantity((current) => current + 1)}>
+            <Plus size={14} aria-hidden="true" />
+          </button>
+          <button className="add-to-cart" type="button" aria-label={`Adicionar ${quantity} ${product.name} ao carrinho`} onClick={() => addItem(product.id, quantity)}>
+            <ShoppingCart size={18} aria-hidden="true" />
+          </button>
+        </QuantityControls>
       </ProductInfo>
     </ProductCard>
   )

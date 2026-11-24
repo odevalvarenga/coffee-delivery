@@ -1,6 +1,6 @@
 # TASK-1 — Fundação do projeto, identidade visual e catálogo
 
-**Status:** concluída conforme a captura gráfica fornecida; aguardando aprovação do estudante antes de iniciar a TASK-2.  
+**Status:** concluída conforme a captura gráfica fornecida; avanço para a TASK-2 iniciado por autorização explícita do estudante.
 **Dependências resolvidas nesta tarefa:** autorização explícita; projeto inicial vazio; captura de Home/catálogo fornecida. O link original do Figma e a rubrica integral continuam pendentes, mas não impediram a implementação limitada a esta referência.
 
 ## Escopo

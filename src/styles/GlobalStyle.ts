@@ -3,10 +3,10 @@ import { tokens } from './tokens'
 
 export const GlobalStyle = createGlobalStyle`
   :root {
-    color-scheme: light;
+    color-scheme: ${({ theme }) => theme.mode};
     font-family: ${tokens.typography.body};
-    color: ${tokens.colors.ink};
-    background: ${tokens.colors.canvas};
+    color: ${({ theme }) => theme.colors.ink};
+    background: ${({ theme }) => theme.colors.canvas};
     font-synthesis: none;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
@@ -21,8 +21,8 @@ export const GlobalStyle = createGlobalStyle`
   button { color: inherit; }
   a { color: inherit; text-decoration: none; }
   img { display: block; max-width: 100%; }
-  ::selection { color: ${tokens.colors.white}; background: ${tokens.colors.purple}; }
-  :focus-visible { outline: 3px solid ${tokens.colors.purpleDark}; outline-offset: 4px; }
+  ::selection { color: ${({ theme }) => theme.colors.onAccent}; background: ${({ theme }) => theme.colors.purple}; }
+  :focus-visible { outline: 3px solid ${({ theme }) => theme.colors.purpleDark}; outline-offset: 4px; }
 
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { scroll-behavior: auto !important; animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
